@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Downloader</title>
+    <style>
+        body {
+            font-family: "Circular", "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #191414; /* Spotify's background color */
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #000; /* Spotify's container background color */
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 40px;
+            margin-right: 10px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #1db954; /* Spotify's primary color */
+            margin: 0;
+        }
+        .form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #000; /* Spotify's input border color */
+            border-radius: 25px; /* Spotify's input border radius */
+            font-size: 16px;
+            background-color: #535353; /* Spotify's input background color */
+            color: #fff;
+            padding-left: 20px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #1db954; /* Spotify's primary color */
+            color: #fff;
+            border: none;
+            border-radius: 25px; /* Spotify's button border radius */
+            font-size: 16px;
+            outline: none;
+            width: 120px;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+        @media only screen and (max-width: 600px) {
+            input[type="text"] {
+                width: calc(100% - 40px);
+            }
+            button {
+                width: calc(100% - 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="Spotifyjunry.jpeg" alt="Spotify Logo">
+            <h1>Spotify Downloader</h1>
+        </div>
+        <div class="form">
+            <input type="text" id="title" placeholder="Enter song title">
+            <button onclick="searchTrack()">Search</button>
+        </div>
+        <div class="result" id="result"></div>
+        <footer>Developed by <a href='https://www.facebook.com/profile.php?id=100075262125552' target='_blank'>JunryPacot</a></footer>
+    </div>
+    <script>
+        const accessToken = 'YOUR_ACCESS_TOKEN'; // Replace with your actual Spotify access token
+
+        function searchTrack() {
+            const title = document.getElementById('title').value;
+            fetch(`https://api.spotify.com/v1/search?q=track:${encodeURIComponent(title)}&type=track`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.tracks.items.length > 0) {
+                    const track = data.tracks.items[0];
+                    resultDiv.innerHTML = `
+                        <h2>${track.name}</h2>
+                        <p>Artist: ${track.artists.map(artist => artist.name).join(', ')}</p>
+                        <p>Album: ${track.album.name}</p>
+                        <img src="${track.album.images[0].url}" alt="Album Art" style="width: 100px; height: 100px;">
+                    `;
+                } else {
+                    resultDiv.innerHTML = 'No track found.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'An error occurred while fetching data.';
+            });
+        }
+    </script>
+</body>
+  </html>
